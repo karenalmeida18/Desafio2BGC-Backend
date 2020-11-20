@@ -1,0 +1,104 @@
+# NOTE: update this with your service name
+service: shopminions-api
+
+# Create an optimized package for our functions 
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle # Package our functions with Webpack
+  - serverless-offline
+  - serverless-dotenv-plugin # Load .env as environment variables
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: dev
+  region: sa-east-1
+  apiGateway: {
+    shouldStartNameWithService: true
+  }
+  # These environment variables are made available to our functions
+  # under process.env.
+  environment:
+    tableName: products
+
+  # 'iamRoleStatements' defines the permission policy for the Lambda function.
+  # In this case Lambda functions are granted with permissions to access DynamoDB.
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: "arn:aws:dynamodb:sa-east-1:*:*"
+
+
+functions:
+  create:
+    # Defines an HTTP API endpoint that calls the main function in products/create.js
+    # - path: url path is /products
+    # - method: POST request
+    handler: functions/products/create.main
+    events:
+      - http:
+          path: products
+          method: post
+  get:
+    # Defines an HTTP API endpoint that calls the main function in products/get.js
+    # - path: url path is /products/{id}
+    # - method: GET request
+    handler: functions/products/get.main
+    events:
+      - http:
+          path: products/{id}
+          method: get
+  list: 
+    # Defines an HTTP API endpoint that calls the main function in products/list.js
+    # - path: url path is /products
+    # - method: GET request
+    handler: functions/products/list.main
+    events:
+      - http:
+          path: products
+          method: get
+  delete:
+    # Defines an HTTP API endpoint that calls the main function in products/delete.js
+    # - path: url path is /products/{id}
+    # - method: DELETE request
+    handler: functions/products/delete.main
+    events:
+      - http:
+          path: products/{id}
+          method: delete
+  update:
+    # Defines an HTTP API endpoint that calls the main function in products/update.js
+    # - path: url path is /products/{id}
+    # - method: PUT request
+    handler: functions/products/update.main
+    events:
+      - http:
+          path: products/{id}
+          method: put
+  update-reserved:
+    # Defines an HTTP API endpoint that calls the main function in reserved/update.js
+    # - path: url path is /products/{id}
+    # - method: PUT request
+    handler: functions/reserved/update-reserved.main
+    events:
+      - http:
+          path: products/{id}
+          method: put
+  list-reserved: 
+    # Defines an HTTP API endpoint that calls the main function in reserved/list.js
+    # - path: url path is /products
+    # - method: GET request
+    handler: functions/reserved/list-reserved.main
+    events:
+      - http:
+          path: products
+          method: get
