@@ -1,7 +1,7 @@
 # NOTE: update this with your service name
 service: shopminions-api
 
-# Create an optimized package for our functions 
+# Create an optimized package for our functions
 package:
   individually: true
 
@@ -15,9 +15,7 @@ provider:
   runtime: nodejs10.x
   stage: dev
   region: sa-east-1
-  apiGateway: {
-    shouldStartNameWithService: true
-  }
+  apiGateway: { shouldStartNameWithService: true }
   # These environment variables are made available to our functions
   # under process.env.
   environment:
@@ -37,7 +35,6 @@ provider:
         - dynamodb:DescribeTable
       Resource: "arn:aws:dynamodb:sa-east-1:*:*"
 
-
 functions:
   create:
     # Defines an HTTP API endpoint that calls the main function in products/create.js
@@ -48,6 +45,7 @@ functions:
       - http:
           path: products
           method: post
+          cors: true
   get:
     # Defines an HTTP API endpoint that calls the main function in products/get.js
     # - path: url path is /products/{id}
@@ -57,7 +55,8 @@ functions:
       - http:
           path: products/{id}
           method: get
-  list: 
+          cors: true
+  list:
     # Defines an HTTP API endpoint that calls the main function in products/list.js
     # - path: url path is /products
     # - method: GET request
@@ -66,6 +65,7 @@ functions:
       - http:
           path: products
           method: get
+          cors: true
   delete:
     # Defines an HTTP API endpoint that calls the main function in products/delete.js
     # - path: url path is /products/{id}
@@ -75,6 +75,7 @@ functions:
       - http:
           path: products/{id}
           method: delete
+          cors: true
   update:
     # Defines an HTTP API endpoint that calls the main function in products/update.js
     # - path: url path is /products/{id}
@@ -84,6 +85,7 @@ functions:
       - http:
           path: products/{id}
           method: put
+          cors: true
   update-reserved:
     # Defines an HTTP API endpoint that calls the main function in reserved/update.js
     # - path: url path is /products/{id}
@@ -91,14 +93,22 @@ functions:
     handler: functions/reserved/update-reserved.main
     events:
       - http:
-          path: products/{id}
+          path: reserved/{id}
           method: put
-  list-reserved: 
+          cors: true
+          authorizer: aws_iam
+  list-reserved:
     # Defines an HTTP API endpoint that calls the main function in reserved/list.js
     # - path: url path is /products
     # - method: GET request
     handler: functions/reserved/list-reserved.main
     events:
       - http:
-          path: products
+          path: reserved
           method: get
+          cors: true
+          authorizer: aws_iam
+  # Create our resources with separate CloudFormation templates
+resources:
+  # API Gateway Errors
+  - ${file(resources/api-gateway-erros.yml)}
