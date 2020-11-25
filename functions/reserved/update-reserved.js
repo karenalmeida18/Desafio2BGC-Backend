@@ -1,10 +1,9 @@
-import mail from '../../libs/mail-lib';
+import response from '../../libs/response-lib';
 import dynamoDb from '../../libs/dynamoDB-lib';
 
-export const main = mail(async (event, context) => {
+export const main = response(async (event, context) => {
   const reservedBy = event.requestContext.identity.cognitoIdentityId;
   const productId = event.pathParameters.id;
-  const { email } = JSON.parse(event.body);
 
   const params = {
     TableName: process.env.tableName,
@@ -16,5 +15,5 @@ export const main = mail(async (event, context) => {
 
   await dynamoDb.update(params);
 
-  return email;
+  return { success: true };
 });

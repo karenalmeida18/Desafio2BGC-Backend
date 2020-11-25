@@ -7,7 +7,7 @@ export const main = response(async (event, context) => {
     // 'KeyConditionExpression' defines the condition for the query
     // - 'reservedBy = :userId': only return items with matching 'userId'
     //   partition key
-    KeyConditionExpression: "reservedBy = :userId",
+    FilterExpression: "reservedBy = :userId",
     // 'ExpressionAttributeValues' defines the value in the condition
     // - ':userId': defines 'userId' to be the id of the author
     ExpressionAttributeValues: {
@@ -15,7 +15,7 @@ export const main = response(async (event, context) => {
     },
   };
 
-  const res = await dynamoDb.query(params);
+  const res = await dynamoDb.scan(params);
 
   // Return the matching list of items in response body
   return res.Items;
