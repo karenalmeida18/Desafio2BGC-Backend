@@ -20,6 +20,7 @@ provider:
   # under process.env.
   environment:
     tableName: products
+    bucket: shopminions-upload
 
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
@@ -33,7 +34,16 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
         - dynamodb:DescribeTable
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
       Resource: "arn:aws:dynamodb:sa-east-1:*:*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+      Resource: "arn:aws:s3:::shopminions-upload/*"
 
 functions:
   create:
@@ -108,7 +118,27 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
-  # Create our resources with separate CloudFormation templates
+  send:
+    # Defines an HTTP API endpoint that calls the main function in reserved/list.js
+    # - path: url path is /products
+    # - method: GET request
+    handler: functions/mails/send-email.main
+    events:
+      - http:
+          path: send
+          method: post
+          cors: true
+          authorizer: aws_iam 
+  #functions upload file
+  upload:
+    handler: functions/upload/put-file.main
+    events:
+      - http: 
+          path: uploads
+          method: get
+          cors: true
+# Create our resources with separate CloudFormation templates
 resources:
   # API Gateway Errors
   - ${file(resources/api-gateway-erros.yml)}
+
