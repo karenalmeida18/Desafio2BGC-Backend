@@ -18,7 +18,7 @@ export async function main(event, context) {
     from: 'shopminionscontato@gmail.com',
     to: [email, 'karenalmeida340@gmail.com'],
     subject: 'shopminions - reserva de boneco ',
-    text: `Seu produto " ${title} " foi reservado com sucesso!`
+    html: `Seu(s) produto(s) <br> " ${title} " <br> foram reservado(s) com sucesso!`
   });
 
   return {

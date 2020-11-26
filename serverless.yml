@@ -98,18 +98,18 @@ functions:
           cors: true
   update-reserved:
     # Defines an HTTP API endpoint that calls the main function in reserved/update.js
-    # - path: url path is /products/{id}
+    # - path: url path is /reserved
     # - method: PUT request
     handler: functions/reserved/update-reserved.main
     events:
       - http:
-          path: reserved/{id}
+          path: reserved
           method: put
           cors: true
           authorizer: aws_iam
   list-reserved:
     # Defines an HTTP API endpoint that calls the main function in reserved/list.js
-    # - path: url path is /products
+    # - path: url path is /reserved
     # - method: GET request
     handler: functions/reserved/list-reserved.main
     events:
