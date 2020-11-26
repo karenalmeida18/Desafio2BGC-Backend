@@ -16,7 +16,7 @@ export async function main(event, context) {
 
   await transporter.sendMail({
     from: 'shopminionscontato@gmail.com',
-    to: [email, 'karenalmeida340@gmail.com'],
+    to: [email, 'thiago@bgcbrasil.com.br'],
     subject: 'shopminions - reserva de boneco ',
     html: `Seu(s) produto(s) <br> " ${title} " <br> foram reservado(s) com sucesso!`
   });
